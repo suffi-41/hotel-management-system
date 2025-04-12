@@ -10,12 +10,12 @@ const roomSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['single', 'double', 'Suite', 'luxury', 'deluxe'],
+        enum: ['single', 'double', 'suite', 'luxury', 'deluxe'],
         default: 'single'
     },
     status: {
         type: String,
-        enum: ['available', 'occupied', 'maintenance', 'cleaning'],
+        enum: ['available', 'occupied', 'maintenance', 'cleaning', 'inprogress'],
         default: 'available'
     },
     price: {
@@ -75,6 +75,10 @@ roomSchema.methods.calculateAverageRating = function () {
     }
     return this.averageRating;
 };
+
+roomSchema.virtual('reviewCount').get(function () {
+    return this.reviews.length;
+});
 
 const Room = mongoose.model('Room', roomSchema);
 export default Room;

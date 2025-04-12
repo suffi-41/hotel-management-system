@@ -20,6 +20,7 @@ export default {
         'images_10':"url('./src/assets/pexels-wildlittlethingsphoto-2017802.jpg')",
       },
     },
+    
   },
   plugins: [],
 }

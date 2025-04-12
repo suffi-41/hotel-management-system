@@ -65,7 +65,7 @@ const BookingDetails = () => {
 
   return (
     !isLoading && (
-      <div className="p-4 bg-gray-100 bg-white">
+      <div className="p-4">
         {/* Filter Navigation */}
         <div className="bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg mb-6">
           <h1 className="text-3xl font-bold text-white p-2">

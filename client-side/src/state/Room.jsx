@@ -13,6 +13,18 @@ import {
   getAllBookingsByGuestIdUrl,
   getAllbookingsUrl,
   getBookingDetailsByIdUrl,
+  getAllCheckInUrl,
+  getAllCheckOutUrl,
+  getAllBookingsUrl,
+  getCurrentGuestUrl,
+  getRoomTypeGrouptOfSumUrl,
+  getOccupancyTredUrl,
+  roomAvaibilityUrl,
+  getRoomStatusUrl,
+  getAllBookedRoomGuestsUrl,
+  checkedInVisitedStatusUrl,
+  checkedOutVisitedStatusUrl,
+  getMonthlyRevenueUrl,
 } from "../utils/api";
 
 import { logged_token } from "../utils/extra";
@@ -192,6 +204,150 @@ export function Room({ children }) {
     }
   };
 
+  // get all booking check in  today lengtn
+  const getAllCheckIn = async () => {
+    try {
+      const res = await fetch(getAllCheckInUrl);
+      return await res.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get all booking check in  today lengtn
+  const getAllCheckOut = async () => {
+    try {
+      const res = await fetch(getAllCheckOutUrl);
+      return await res.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get all booking  lengtn
+  const getAllBookings = async () => {
+    try {
+      const res = await fetch(getAllBookingsUrl);
+      return await res.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get current guest
+  const getCurrentGuest = async () => {
+    try {
+      const res = await fetch(getCurrentGuestUrl);
+      return await res.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get room status
+
+  //get room type group of sum
+  const getRoomTypeGroupOfSum = async () => {
+    try {
+      const res = await fetch(getRoomTypeGrouptOfSumUrl);
+      return await res.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // get rooms availibility
+  const getRoomAvaibility = async (date = new Date()) => {
+    try {
+      const response = await fetch(`${roomAvaibilityUrl}?date=${date}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //get room todya status
+  const getRoomStatus = async () => {
+    try {
+      const response = await fetch(getRoomStatusUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get all booked room guests
+  const getAllBookedRoomGuests = async (query = "") => {
+    try {
+      const response = await fetch(
+        `${getAllBookedRoomGuestsUrl}/?guestdetials=${query}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // checked in visited status
+  const checkedInVisitedStatus = async (id) => {
+    try {
+      const response = await fetch(`${checkedInVisitedStatusUrl}/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // checked out visited status
+  const checkedOutVisitedStatus = async (id) => {
+    try {
+      const response = await fetch(`${checkedOutVisitedStatusUrl}/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //get monthly revenue
+  const getMonthlyRevenue = async () => {
+    try {
+      const response = await fetch(getMonthlyRevenueUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <RoomContext.Provider
       value={{
@@ -212,6 +368,19 @@ export function Room({ children }) {
         getAllBokings,
         //admin and users
         getBookingDetialsById,
+        getAllCheckIn,
+        getAllCheckOut,
+        getAllBookings,
+        getCurrentGuest,
+        getRoomTypeGroupOfSum,
+
+        //receptioninst
+        getRoomAvaibility,
+        getRoomStatus,
+        getAllBookedRoomGuests,
+        checkedInVisitedStatus,
+        checkedOutVisitedStatus,
+        getMonthlyRevenue,
       }}
     >
       {children}

@@ -1,7 +1,10 @@
 import { createContext } from "react";
 import { Room } from "./Room";
-import { Utils } from "./Utils";
 import { Visualized } from "./Visualized";
+import { ReviewsProvider } from "./Review";
+import { Notification } from "./Notification";
+import { useSelector } from "react-redux";
+
 import {
   getUserAvatureUrl,
   sendOtpUrl,
@@ -25,15 +28,24 @@ import {
   blockedAndUnblockedUserUrl,
   updateEmployeeDetialsWithTokenUrl,
   employeeUploadProfilePicUrl,
+  employeeOtpSenderUrl,
+  employeeVerificationUrl,
+  employeeResetPasswordUrl,
+  getEmpAvatueAndIdUrl,
 } from "../utils/api";
 
-import { logged_token, admin_token } from "../utils/extra";
+import { logged_token, admin_token, staff_token } from "../utils/extra";
 
 export const UserContext = createContext();
 
 export function User({ children }) {
+  const { reciptionistId, managerId } = useSelector(
+    (state) => state.userAvatureReducer
+  );
+
   const auth_token = logged_token();
   const auth_admin_token = admin_token();
+  const auth_staff_token = staff_token();
   let username = "User";
   const sendOtp = async (id) => {
     try {
@@ -288,7 +300,9 @@ export function User({ children }) {
 
   const employeeHeaders = {
     "Content-Type": "application/json",
-    "authorized-user-token": auth_admin_token,
+    "authorized-user-token": reciptionistId
+      ? auth_staff_token
+      : auth_admin_token,
   };
   const getEmployeedetialsWithToken = async () => {
     try {
@@ -318,8 +332,81 @@ export function User({ children }) {
     try {
       const response = await fetch(employeeUploadProfilePicUrl, {
         method: "PUT",
-        headers: { "authorized-user-token": auth_admin_token },
+        headers: { "authorized-user-token": employeeHeaders },
         body: formData,
+      });
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const employeeOtpSender = async (id) => {
+    try {
+      const response = await fetch(`${employeeOtpSenderUrl}/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const employeeVerification = async ({ id, code }) => {
+    try {
+      const response = await fetch(`${employeeVerificationUrl}/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ otp: code }),
+      });
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const employeeResetPassword = async ({ id, password }) => {
+    try {
+      const response = await fetch(`${employeeResetPasswordUrl}/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const reciptionistHeader = {
+    "Content-Type": "application/json",
+    "authorized-user-token": auth_staff_token,
+  };
+
+  const geAdminAvatueAndId = async () => {
+    try {
+      const response = await fetch(getEmpAvatueAndIdUrl, {
+        method: "GET",
+        headers: employeeHeaders,
+      });
+      return await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getEmpAvatueAndId = async () => {
+    try {
+      const response = await fetch(getEmpAvatueAndIdUrl, {
+        method: "GET",
+        headers: reciptionistHeader,
       });
       return await response.json();
     } catch (error) {
@@ -353,12 +440,19 @@ export function User({ children }) {
         getEmployeedetialsWithToken,
         updateEmployeeDetialsWithToken,
         empUploadPic,
+        employeeOtpSender,
+        employeeVerification,
+        employeeResetPassword,
+        getEmpAvatueAndId,
+        geAdminAvatueAndId,
       }}
     >
       <Room>
-        <Visualized>
-          <Utils>{children}</Utils>
-        </Visualized>
+        <Notification>
+          <ReviewsProvider>
+            <Visualized>{children}</Visualized>
+          </ReviewsProvider>
+        </Notification>
       </Room>
     </UserContext.Provider>
   );

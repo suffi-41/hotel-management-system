@@ -6,8 +6,12 @@ import { formatDate, calculateDays } from "../../../utils/extra";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import DeleteModal from "../../../components/DeleteModal";
+import { NotificationContext } from "../../../state/Notification";
+
 const BookedRoom = () => {
   const { getUserAllBookings, cancelBooking } = useContext(RoomContext);
+  const { bookingCancelledNotification } = useContext(NotificationContext);
+
   const [filter, setFilter] = useState("upcoming"); // State to manage the active filter
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["booking"],
@@ -43,11 +47,12 @@ const BookedRoom = () => {
 
   const cancelBookingFunction = async (id) => {
     const response = await cancelBooking(id);
-    const { status, message } = await response;
+    const { status, message, data } = await response;
     if (status) {
       toast.success(message);
       refetch();
       setIsModalOpen(false);
+      bookingCancelledNotification(data);
     } else {
       toast.error(message);
     }

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom"; // For routing
-
 //redux
 import { actionCreator } from "../../../../redux/index";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
 import { toast } from "react-toastify";
+import { FcCalendar } from "react-icons/fc";
+import { FaRegUserCircle } from "react-icons/fa";
+import { MdCircleNotifications } from "react-icons/md";
 
 const SideNavbar = () => {
   const Navigation = useNavigate();
@@ -14,13 +16,28 @@ const SideNavbar = () => {
   const action = bindActionCreators(actionCreator, dispatch);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
+  const { unreadLength } = useSelector((state) => state?.notificationReducer);
   const navItems = [
-    { name: "Profile", path: "profile", icon: "👤" },
-    { name: "Bookings", path: "bookings", icon: "📅" },
+    { name: "Profile", path: "profile", icon: <FaRegUserCircle /> },
+    { name: "Bookings", path: "bookings", icon: <FcCalendar /> },
+    {
+      name: "Notifications",
+      path: "notification",
+      icon: (
+        <div className="relative">
+          <MdCircleNotifications />
+          {unreadLength !== 0 && (
+            <small className="absolute bottom-3 bg-red-500 h-4 w-4 left-2 flex items-center justify-center text-sm rounded-full text-white">
+              {unreadLength}
+            </small>
+          )}
+        </div>
+      ),
+    },
   ];
 
   const logOut = async () => {
-    localStorage.clear();
+    localStorage.removeItem("authentication_token");
     action.logout();
     toast.error("Logout Successfully");
     Navigation("/authentication");

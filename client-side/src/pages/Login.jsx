@@ -24,6 +24,7 @@ export default function Login() {
           body: JSON.stringify(values),
         });
         const { status, message, data } = await response.json();
+        console.log(data, message,status)
         if (status) {
           toast.success(message);
           navigate("password", { state: { data } });

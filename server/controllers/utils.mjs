@@ -5,15 +5,9 @@ import Room from "../models/Room.mjs";
 
 export const getAllCollectionDataLength = async (req, res) => {
     try {
-        const totalUsers = await User.countDocuments();
+        const currentGuest = await User.countDocuments();
         const activeusers = await User.countDocuments({ isBlocked: false });
         const inactivateUsers = await User.countDocuments({ isBlocked: true });
-
-        const totalsEmployees = await Employees.countDocuments();
-        const activeEmployees = await Employees.countDocuments({ isActive: false });
-        const inactivateEmployees = await Employees.countDocuments({ isActive: true });
-        const onLeaveEmployees = await Employees.countDocuments({ onLeave: true });
-        const onDeutyEmployees = await Employees.countDocuments({ onLeave: false });
 
         const users = [
             {
@@ -30,40 +24,45 @@ export const getAllCollectionDataLength = async (req, res) => {
                 status: "red"
             }
         ]
-        const employees = [
-            {
-                name: "Total Employess",
-                length: totalsEmployees,
-                status: "blue"
-            },
-            {
-                name: "Active Employess",
-                length: activeEmployees,
-                status: "green"
-            },
-            {
-                name: "Inactivate Employess",
-                length: inactivateEmployees,
-                status: "red"
-            },
-            {
-                name: "OnLeave Employess",
-                length: onLeaveEmployees,
-                status: "blue"
-            }, {
-                name: "OnDeuty Employess",
-                length: onDeutyEmployees,
-                status: "green"
-            }
+        // const totalsEmployees = await Employees.countDocuments();
+        // const activeEmployees = await Employees.countDocuments({ isActive: false });
+        // const inactivateEmployees = await Employees.countDocuments({ isActive: true });
+        // const onLeaveEmployees = await Employees.countDocuments({ onLeave: true });
+        // const onDeutyEmployees = await Employees.countDocuments({ onLeave: false });
+        // const employees = [
+        //     {
+        //         name: "Total Employess",
+        //         length: totalsEmployees,
+        //         status: "blue"
+        //     },
+        //     {
+        //         name: "Active Employess",
+        //         length: activeEmployees,
+        //         status: "green"
+        //     },
+        //     {
+        //         name: "Inactivate Employess",
+        //         length: inactivateEmployees,
+        //         status: "red"
+        //     },
+        //     {
+        //         name: "OnLeave Employess",
+        //         length: onLeaveEmployees,
+        //         status: "blue"
+        //     }, {
+        //         name: "OnDeuty Employess",
+        //         length: onDeutyEmployees,
+        //         status: "green"
+        //     }
 
 
-        ]
+        // ]
 
         // const today = new Date();
         // today.setHours(0, 0, 0, 0);
         // const upcomingBookings = await Booking.countDocuments({ $and: [{ checkInDate: { $gte: today } }, { status: "Booked" }] });
 
-        return res.status(201).json({ status: true, users, employees })
+        return res.status(201).json({ status: true, users })
     } catch (error) {
         console.log(error).message
         res.status(500).json({

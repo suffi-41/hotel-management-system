@@ -1,8 +1,9 @@
-import User from '../models/User.mjs';
 import JWT from 'jsonwebtoken';
 import mail from "../config/_mail.mjs";
-import { hashPassword, comparePassword, otpSender } from "../config/util.mjs";
+import { hashPassword, comparePassword, otpGen, htmlContentForTop } from "../config/util.mjs";
 import uploadFileInCloudinary from "../config/cloudUploaded.mjs";
+import User from '../models/User.mjs';
+
 
 export const userRegistration = async (req, res) => {
     try {
@@ -10,7 +11,7 @@ export const userRegistration = async (req, res) => {
         const name = firstname + " " + lastname;
         const emailId = await User.findOne({ email: email });
         if (emailId) {
-            return res.status(400).json({ sratus: false, message: "Email already exits" })
+            return res.status(400).json({ status: false, message: "Email already exits" })
         }
         const user = await User.findOne({ phoneNumber: phone });
         if (user) {
@@ -36,10 +37,11 @@ export const phoneNumber = async (req, res) => {
     try {
         const { phone } = req.body;
         const user = await User.findOne({ phoneNumber: phone }, { name: 1, avature: 1, email: 1 });
+        console.log(user)
         if (user) {
             return res.status(200).json({ status: true, message: "Enter you password", data: { avature: user.avature, id: user._id, email: user.email } });
         } else {
-            return res.status(400).json({ status: false, message: "Invalid crandential" });
+            return res.status(401).json({ status: false, message: "Invalid crandential" });
         }
     } catch (error) {
         console.log(error)
@@ -51,8 +53,17 @@ export const phoneNumber = async (req, res) => {
 export const send_otp = async (req, res) => {
     try {
         const { id } = req?.params;
-        const info = otpSender(id, User, mail);
-        return res.status(200).json(info);
+        const user = await User.findById(id, { email: 1 });
+        const otp = await otpGen();
+        user.otp = otp;
+        const digits = otp.split("");
+        const subject = "Verify your account";
+        const htmlContent = htmlContentForTop(digits);
+        if (await user.save()) {
+            mail(user?.email, subject, htmlContent);
+            return res.status(200).json({ status: true, message: "Otp send successfully" });
+        }
+        return res.status(400).json({ status: false, message: "Otp send failed" });
     } catch (error) {
         console.log(error)
         return res.status(401).json({ status: false, message: "Internal server error" })
@@ -298,9 +309,9 @@ export const uploadProilePic = async (req, res) => {
 export const getUserAvature = async (req, res) => {
     try {
         const id = await req._id
-        const user = await User.findById(id, { avature: 1, _id: 0 })
+        const user = await User.findById(id, { avature: 1, _id: 1 })
         if (user) {
-            return res.status(200).json({ status: true, avature: user.avature });
+            return res.status(200).json({ status: true, avature: user.avature, id:user._id });
         } else {
             return res.status(400).json({ status: false, message: "some error occupeid" });
         }
@@ -352,4 +363,6 @@ export const getAllUsers = async (req, res) => {
     }
 }
 
+
+// get all curent guest , which users are actived 
 

@@ -225,7 +225,7 @@ const UserProfilePage = () => {
 
   return isLoading ? (
     <LoadingPage />
-  ) : (isError ? (
+  ) : isError ? (
     <ErrorPage />
   ) : (
     !isLoading && (
@@ -702,7 +702,6 @@ const UserProfilePage = () => {
         )}
       </motion.div>
     )
-  )
   );
 };
 export default UserProfilePage;

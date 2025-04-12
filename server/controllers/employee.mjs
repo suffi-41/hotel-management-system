@@ -1,16 +1,74 @@
 import Employees from "../models/Employees.mjs";
-import { hashPassword, comparePassword, otpSender } from "../config/util.mjs";
+import { hashPassword, comparePassword, otpGen, htmlContentForTop } from "../config/util.mjs";
 import generateUniqueId from "generate-unique-id";
 import mail from "../config/_mail.mjs";
 import JWT from "jsonwebtoken";
 import uploadFileInCloudinary from "../config/cloudUploaded.mjs";
 
-export const send_otp = async (req, res) => {
+
+
+export const otpSender = async (req, res) => {
     try {
         const { id } = req?.params;
-        return otpSender(id, Employees, mail);
+        const employee = await Employees.findById(id, { email: 1 });
+        if (!employee) {
+            return res.status(404).json({ status: false, message: "Employee not found" });
+        }
+        const otp = await otpGen();
+        employee.otp = otp;
+        const digits = otp.split("")
+        const htmlContent = htmlContentForTop(digits);
+        if (await employee.save()) {
+            mail(employee?.email, "OTP Verification", htmlContent);
+            return res.status(200).json({ status: true, message: "OTP sent successfully" });
+        }
+        return res.status(400).json({ status: false, message: "OTP not sent" });
+
     } catch (error) {
         console.log(error)
+        return res.json({ status: false, message: "Internal server error, please try again leter!" })
+    }
+}
+
+export const verification = async (req, res) => {
+    try {
+        const { otp } = await req.body;
+        const { id } = req.params;
+        const employee = await Employees.findById(id, { otp: 1 });
+
+        if (employee.otp === otp) {
+            employee.otp = null;
+        }
+
+        if (await employee.save()) {
+            return res.status(200).json({ status: true, message: "Account verified successfully" });
+        }
+        return res.status(400).json({ status: false, message: "Account not verified" });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(401).json({ status: false, message: "Internal server error, please try again leter!" })
+    }
+}
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { password } = await req?.body;
+        const { id } = await req?.params
+
+        const employee = await Employees.findByIdAndUpdate(id, {
+            password: await hashPassword(password)
+        }, {
+            new: true
+        })
+        if (employee) {
+            return res.status(200).json({ status: true, message: "Password reset successfully" })
+        }
+        return res.status(400).json({ status: false, message: "Password not reset" })
+
+    } catch (errro) {
+        console.log(error)
+        return res.status(401).json({ status: false, message: "Internal server error, please try again leter!" })
     }
 }
 
@@ -99,7 +157,7 @@ export const employeeCradentialVerify = async (req, res) => {
                 { phoneNumber: cradentical },
                 { employeeId: cradentical }
             ]
-        }, { _id: 1, role: 1, isLogged: 1, isBlocked: 1 });
+        }, { _id: 1, role: 1, isLogged: 1, isBlocked: 1, email: 1 });
         if (!employee) {
             return res.status(400).json({ status: false, message: "Invalid credential" })
         }
@@ -109,7 +167,7 @@ export const employeeCradentialVerify = async (req, res) => {
         if (employee.isBlocked) {
             return res.status(400).json({ status: false, message: "Your account is blocked" })
         }
-        return res.status(200).json({ status: true, message: "Please  verify password also", data: { id: employee._id } })
+        return res.status(200).json({ status: true, message: "Please  verify password also", data: { id: employee._id, email: employee.email } })
 
     } catch (error) {
         console.log(error)
@@ -144,36 +202,26 @@ export const passowrd_verify = async (req, res) => {
     }
 }
 
-// Verify accound with otp
-// export const verify_account = async (req, res) => {
-//     try {
-//         const { otp, id } = await req.body;
-//         const employee = await Employees.findOne({ _id: id, otp: otp });
-//         if (employee) {
-//             employee.otp = null;
-//             if (await employee.save()) {
-//                 //create token
-//                 const payload = {
-//                     id: employee._id,
-//                     email: employee.email,
-//                     phone: employee.phoneNumber,
-//                     employeeId: employee.employeeId
-//                 }
-//                 const token = JWT.sign(payload, process.env.SECRET_KEY);
-//                 res.status(200).json({ status: true, "message": "Account verified successfully", token });
-//             } else {
-//                 res.status(400).json({ status: false, "message": "Invalid verification code" });
-//             }
-//         }
-//         else {
-//             res.status(400).json({ status: false, "message": "Invalid OTP" });
-//         }
-//     }
-//     catch (error) {
-//         console.log(error)
-//         return res.status(401).json({ status: false, message: "Internal server error, please try again leter!" })
-//     }
-// }
+export const getEmployeesAvatureAndId = async (req, res) => {
+    try {
+        const id = req?._id;
+        const employee = await Employees.findById(id, { avature: 1, id: 1 })
+        return res.status(200).json({
+            status: true,
+            avature: employee?.avature,
+            id: employee?._id
+
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(401).json({
+            status: false,
+            message: "Some error occupied!"
+        })
+    }
+}
+
+
 
 export const getAllEmployees = async (req, res) => {
     try {
@@ -354,6 +402,8 @@ export const uploadProilePic = async (req, res) => {
         return res.status(400).json({ status: false, message: "Some error ocupied" });
     }
 }
+
+
 
 
 

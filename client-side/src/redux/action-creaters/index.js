@@ -161,11 +161,14 @@ export const DeleteRoom = (id) => {
 
 
 // User avature
-export const setUserAvatuer = (avatare) => {
+export const setUserAvatuer = (avatare, id) => {
     return (dispatch) => {
         dispatch({
             type: 'setUserAvatar',
-            payload: avatare
+            payload: {
+                avatare,
+                id
+            }
         })
     }
 }
@@ -177,6 +180,35 @@ export const deleteUserAvatuer = () => {
         })
     }
 }
+
+// employee and manager avatute and id set 
+export const setReciptionistAvatuer = (avatare, id) => {
+    return (dispatch) => {
+        dispatch({
+            type: 'setReciptionistAvatar',
+            payload: {
+                avatare,
+                id,
+
+            }
+
+        })
+    }
+}
+
+export const setManagerAvatuer = (avatare, id) => {
+    return (dispatch) => {
+        dispatch({
+            type: 'setManagerAvatare',
+            payload: {
+                avatare,
+                id
+
+            }
+        })
+    }
+}
+
 
 // User 
 export const AddUser = (User) => {
@@ -223,3 +255,32 @@ export const DeleteUser = (id) => {
         })
     }
 }
+
+// notification action creater
+export const SetNotification = (notifications) => {
+    return (dispatch) => {
+        dispatch({
+            type: 'SetNotification',
+            payload: notifications
+        })
+    }
+}
+
+export const AddNotification = (notification) => {
+    return (dispatch) => {
+        dispatch({
+            type: 'AddNotification',
+            payload: notification
+        })
+    }
+}
+
+export const updateNotificationStatus = () => {
+    return (dispatch) => {
+        dispatch({
+            type: 'updateNotificationStatus',
+
+        })
+    }
+}
+

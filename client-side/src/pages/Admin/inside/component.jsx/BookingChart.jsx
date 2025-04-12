@@ -49,7 +49,7 @@ const BookingChart = () => {
   }, [filter]);
 
   return (
-    <div className="lg:w-1/2 w-full bg-white p-2 shadow-sm rounded-sm ">
+    <div className="w-full bg-white p-2 shadow-sm rounded-sm ">
       <div className=" bg-blue-500 rounded-lg p-2 text-white font-semibold mb-4 flex justify-between">
         <h2 className="text-xl text-start">{labels}</h2>
         <div className="text-start ">

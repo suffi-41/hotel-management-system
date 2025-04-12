@@ -30,7 +30,7 @@ const Room = () => {
     };
   }, [data]);
 
-  return(
+  return (
     <div className="w-full h-full bg-white p-4 rounded-lg">
       <div className="flex justify-between itmes-center">
         <div className="bg-white px-2 mb-4 rounded shadow w-40 ">

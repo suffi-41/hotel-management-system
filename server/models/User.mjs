@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        enum: ['male', 'female',"other"],
+        enum: ['male', 'female', "other"],
         default: 'male'
     },
     dateOfBirth: {
@@ -44,14 +44,14 @@ const userSchema = new mongoose.Schema({
         state: String,
         zipCode: String,
         country: String
-    }, 
+    },
     avature: {
         type: String,
-        default: 'default.png'
+        default: 'https://res.cloudinary.com/dbvotow1k/image/upload/v1742569234/p7xgtvaexc8qxo6dyjrw.jpg'
     },
     createdAt: {
         type: Date,
-        default: Date.now 
+        default: Date.now
     },
     updatedAt: {
         type: Date,

@@ -1,6 +1,13 @@
 import express from "express";
 import multer from "multer"
 import { fetchUser } from "../middleware/fetchUser.mjs"
+import rateLimit from 'express-rate-limit';
+
+const verifyAccountLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: { status: false, message: "Too many attempts, please try again later." }
+});
 
 
 const storage = multer.diskStorage({});
@@ -38,7 +45,7 @@ router.route("/login").post(phoneNumber);
 router.route("/password").post(passowrd_verify);
 
 //routing verify account
-router.route("/verify").post(verify_account);
+router.route("/verify").post(verifyAccountLimiter, verify_account);
 
 router.route("/sendOtp/:id").post(send_otp);
 
@@ -82,6 +89,9 @@ router.route("/get-all-users").get(getAllUsers);
 
 // get user by id
 router.route("/get-user-by-id/:id").get(getUserById);
+
+//get current guest for amdin panel
+
 
 
 

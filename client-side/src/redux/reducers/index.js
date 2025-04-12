@@ -5,6 +5,7 @@ import roomReducer from "./Room";
 import employeeReducer from "./Employee"
 import userAvatureReducer from "./User"
 import UserReducer from "./UserRedux"
+import notificationReducer from "./Notification"
 
 // import counterReducer from "./counterReducer";
 // import isLoggedReducer from "./isLoggedReducer";
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
   roomReducer,
   employeeReducer,
   userAvatureReducer,
-  UserReducer
+  UserReducer,
+  notificationReducer
 });
 
 export default rootReducer;

@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { actionCreator } from "./redux/index";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
-import { logged_token, admin_token } from "./utils/extra";
+import { logged_token, admin_token, staff_token } from "./utils/extra";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
@@ -14,6 +14,7 @@ const queryClient = new QueryClient();
 function App() {
   const token = logged_token();
   const adminToken = admin_token();
+  const staffToken = staff_token();
   const dispatch = useDispatch();
   const action = bindActionCreators(actionCreator, dispatch);
 
@@ -23,6 +24,9 @@ function App() {
     }
     if (adminToken) {
       action.Adminlogin();
+    }
+    if (staffToken) {
+      action.Stafflogin();
     }
   }, []);
   return (

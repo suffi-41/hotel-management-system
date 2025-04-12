@@ -8,7 +8,7 @@ const mail = (userEmail, subject, htmlContent) => {
       auth: {
         user: 'mohdbinsufiyan@gmail.com',
         pass: 'myex olvy kmnf cuze'
-      }
+      } 
     });
     const mailOptions = {
       from: process.env.webEmail,

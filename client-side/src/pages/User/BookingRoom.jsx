@@ -4,10 +4,12 @@ import { useEffect, useState, useContext } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { RoomContext } from "../../state/Room";
 import { toast } from "react-toastify";
+import { NotificationContext } from "../../state/Notification";
 
 const BookingRoom = () => {
   const navigate = useNavigate();
   const { BookingRoom } = useContext(RoomContext);
+  const { newBookingNotification } = useContext(NotificationContext);
   const { id } = useParams();
   const location = useLocation();
 
@@ -78,6 +80,7 @@ const BookingRoom = () => {
       const { status, data, message } = await respose;
       if (status) {
         toast.success(message);
+        newBookingNotification(data?.notificationResult);
         formik.resetForm();
         navigate(`/room/booking-room/payment/${data._id}`, {
           state: { totalPrice: data.totalPrice },

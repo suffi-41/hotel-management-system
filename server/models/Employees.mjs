@@ -33,7 +33,7 @@ const employeeSchema = new mongoose.Schema({
     },
     dateOfBirth: {
         type: String,
-        required:true
+        required: true
     },
     otp: {
         type: String,
@@ -52,7 +52,7 @@ const employeeSchema = new mongoose.Schema({
     },
     avature: {
         type: String,
-        default: 'default.png'
+        default: 'https://res.cloudinary.com/dbvotow1k/image/upload/v1742569234/p7xgtvaexc8qxo6dyjrw.jpg'
     },
     role: {
         type: String,
@@ -67,9 +67,9 @@ const employeeSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    isActive:{
-        type:Boolean,
-        default:true
+    isActive: {
+        type: Boolean,
+        default: true
     },
     salary: {
         type: Number,

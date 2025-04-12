@@ -105,7 +105,9 @@ const RoomCard = ({ room }) => {
           <h2 className="text-xl font-bold text-gray-800">
             Room No: {room.roomNumber} ({room.type})
           </h2>
-          <p className="text-gray-600 text-sm mt-1 text-justify">{room.description}</p>
+          <p className="text-gray-600 text-sm mt-1 text-justify">
+            {room.description}
+          </p>
 
           {/* Address */}
           <p className="text-gray-500 text-sm mt-2 flex items-center">
@@ -114,18 +116,16 @@ const RoomCard = ({ room }) => {
 
           {/* Rating */}
           <div className="flex items-center mt-2">
-            {renderStars(room.rating)}
+            {renderStars(room?.averageRating)}
             <span className="ml-2 text-gray-500 text-sm">
-              {room.rating} ({room.reviews} reviews)
+              {room.rating} ({room.reviewCount} reviews)
             </span>
           </div>
 
           {/* Price */}
           <div className="mt-4 flex justify-between items-center">
             <div>
-              <span className="text-lg font-semibold">
-                ${room.price}
-              </span>
+              <span className="text-lg font-semibold">${room.price}</span>
               <span className="text-sm text-gray-500"> / night</span>
             </div>
 
@@ -136,17 +136,6 @@ const RoomCard = ({ room }) => {
                 className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition duration-300 text-sm font-medium"
               >
                 View
-              </Link>
-              <Link
-                to={isLogged ? `/booking-room/${room._id}` : "/authentication"}
-                state={{
-                  roomNumber: room.roomNumber,
-                  capacity: room.capacity,
-                  roomPrice: room.price,
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 text-sm font-medium"
-              >
-                Book Now
               </Link>
             </div>
           </div>

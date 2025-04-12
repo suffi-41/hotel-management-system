@@ -1,7 +1,7 @@
 import multer from "multer"
 import { uploadFileInCloudinary } from "../config/cloudUploaded.mjs"
 import Room from "../models/Room.mjs"
-
+import User from "../models/User.mjs"
 
 export const addRoomDetials = async (req, res) => {
     try {
@@ -12,9 +12,11 @@ export const addRoomDetials = async (req, res) => {
         const files = await req.files;
         const images = [];
 
+
         if (!files) {
             return res.status(400).json({ status: false, message: "Room images are required" })
         }
+        data.amenities = await JSON.parse(data.amenities)
 
         for (const file of files) {
             const result = await uploadFileInCloudinary(file.path)
@@ -54,7 +56,8 @@ export const getRoomDetials = async (req, res) => {
 export const updateRoomDetials = async (req, res) => {
     try {
         const roomId = await req?.params?.id;
-        const { type, price, capacity, description, status } = await req.body;
+        const { type, price, capacity, description, status, amenities } = await req.body;
+        console.log(amenities)
         const updatedRoom = await Room.findByIdAndUpdate(
             roomId,  // Room ID to search for
             {
@@ -63,7 +66,8 @@ export const updateRoomDetials = async (req, res) => {
                     price,
                     status,
                     capacity,
-                    description
+                    description,
+                    amenities,
                 },
             },
             { new: true }  // Return the updated document after the operation
@@ -118,12 +122,14 @@ export const addRoomImages = async (req, res) => {
 export const getOneRoomDetials = async (req, res) => {
     try {
         const { id } = req?.params;
-        const room = await Room.findById(id);
+        const room = await Room.findById(id).populate({
+            path: 'reviews.user',
+            select: 'name avature' // Select specific fields from User model
+        })
         if (!room) {
             return res.status(401).json({ status: true, message: "room not found" })
         }
         return res.status(200).json({ status: true, room })
-
     } catch (error) {
         console.log(error);
         res.status(400).json({ status: false, message: "Some error occupied!" })
@@ -143,4 +149,101 @@ export const deleteRoom = async (req, res) => {
         res.status(400).json({ status: false, message: "Some error occupied!" })
     }
 }
+
+export const addReviews = async (req, res) => {
+    try {
+
+        const userId = await req._id;
+        const { id } = await req.params; // Get room ID from URL
+        const { rating, comment } = await req?.body; // Get review details
+        // Find the room
+        const room = await Room.findById(id);
+        if (!room) {
+            return res.status(404).json({ status: false, message: "Room not found" });
+        }
+        // Create new review
+        const newReview = {
+            user: userId,
+            rating,
+            comment,
+            createdAt: new Date()
+        };
+
+        // Add the review to the room
+        await room?.reviews?.push(newReview);
+        // Recalculate average rating
+        await room.calculateAverageRating();
+        // Save updated room
+        const result = await room.save();
+        const user = await User.findById(userId, { name: 1, avature: 1 })
+        if (user) {
+            newReview.user = user;
+        }
+        if (!result) {
+            return res.status(400).json({ status: false, message: "Review not added" });
+        }
+        const data = {
+            newReview,
+            avarageRatting: result.averageRating,
+        }
+        return res.status(400).json({ status: true, message: "Review added  successfully", data });
+    } catch (error) {
+        return res.status(500).json({ message: "Server Error", error: error.message });
+    }
+
+}
+
+
+export const roomTypeGroupforSum = async (req, res) => {
+    try {
+        const result = await Room.aggregate([
+            {
+                $group: {
+                    _id: "$type",  // Group by room type
+                    totalRooms: { $sum: 1 } // Count rooms per type
+                }
+            },
+            {
+                $project: {
+                    _id: 0,          // Hide the default _id field
+                    type: "$_id", // Rename _id to roomType
+                    totalRooms: 1     // Include totalRooms
+                }
+            }
+        ]);
+        return res.status(201).json({
+            status: true,
+            data: result
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(401).json({ status: false, message: "Internal server errors!" })
+    }
+}
+
+
+export const updateAmenity = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { amenities } = req.body;
+        const room = await Room.findById(id);
+        if (!room) {
+            return res.status(404).json({ status: false, message: "Room not found" });
+
+        }
+        room.amenities = amenities;
+        const result = await room.save();
+        if (!result) {
+            return res.status(400).json({ status: false, message: "Amenity not updated" });
+        }
+        return res.status(200).json({ status: true, message: "Amenity updated successfully" });
+
+    }
+    catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Server Error", error: error.message });
+    }
+}
+
 

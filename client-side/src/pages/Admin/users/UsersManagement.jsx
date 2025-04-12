@@ -175,19 +175,6 @@ export default function UsersManagemant() {
               </p>
             </div>
           </div>
-
-          {/* Employees on Leave */}
-          <div className="bg-white p-4 shadow-md rounded-lg flex items-center">
-            <div className="bg-yellow-100 p-3 rounded-full mr-4">
-              <FaUserCog className="text-yellow-500 text-2xl" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-700">On Leave</h3>
-              <p className="text-2xl">
-                {Users?.filter((user) => user.isBlocked).length}
-              </p>
-            </div>
-          </div>
         </section>
         {/* <motion.div
           className="flex justify-between items-center"

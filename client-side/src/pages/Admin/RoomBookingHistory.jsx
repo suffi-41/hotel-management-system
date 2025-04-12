@@ -123,19 +123,21 @@ const RoomBookingHistory = () => {
             {/* Filter Navigation */}
             <div className="w-full flex justify-between ">
               <div className="p-2 w-auto flex justify-start items-start gap-2">
-                {["upcoming", "completed", "cancelled"].map((item) => (
-                  <button
-                    key={item}
-                    onClick={() => setFilter(item)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      filter === item
-                        ? "bg-blue-500 text-white"
-                        : "bg-white text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
-                    {item.charAt(0).toUpperCase() + item.slice(1)}
-                  </button>
-                ))}
+                {["upcoming", "current", "completed", "cancelled"].map(
+                  (item) => (
+                    <button
+                      key={item}
+                      onClick={() => setFilter(item)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                        filter === item
+                          ? "bg-blue-500 text-white"
+                          : "bg-white text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      {item.charAt(0).toUpperCase() + item.slice(1)}
+                    </button>
+                  )
+                )}
               </div>
               <motion.div
                 className="flex justify-between items-center py-2 mt-2"

@@ -9,7 +9,9 @@ import { MdHome } from "react-icons/md";
 const Navbar = ({ scrollY }) => {
   const { pathname } = useLocation();
   const { isLogged } = useSelector((state) => state.isLoggedReducer);
-  const avature = useSelector((state) => state.userAvatureReducer);
+  const { userAvature: avature } = useSelector(
+    (state) => state.userAvatureReducer
+  );
   const [isTrue, setIsTrue] = useState(false);
   useEffect(() => {
     if (pathname !== "/" && !pathname.startsWith("/authentication")) {

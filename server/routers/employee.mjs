@@ -18,13 +18,26 @@ import {
     getEmplyeeDetials,
     getEmployeedetailsWithToken,
     updateEmployeeDetialsWithToken,
-    uploadProilePic
+    uploadProilePic,
+    otpSender,
+    verification,
+    resetPassword,
+    getEmployeesAvatureAndId
 
 } from "../controllers/employee.mjs";
 
 
 router.route('/login').post(employeeCradentialVerify)
 router.route('/password-verification').post(passowrd_verify)
+router.route('/otp-sender/:id').post(otpSender)
+router.route('/verification/:id').post(verification)
+router.route('/reset-password/:id').put(resetPassword)
+router.route("/get-emp-avature-id").get(fetchUser, getEmployeesAvatureAndId)
+
+
+
+
+
 router.route('/add-employee').post(addEmployee)
 router.route("/get-employees").get(getAllEmployees);
 router.route("/update-employee-detials/:id").put(updateEmployeeDetials);

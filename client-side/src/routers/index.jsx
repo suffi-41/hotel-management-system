@@ -32,7 +32,7 @@ const Room = lazy(() => import("../pages/Admin/room/Room.jsx"));
 
 const RoomHistory = lazy(() => import("../pages/Admin/room/RoomHistory.jsx"));
 
-const Bookings = lazy(() => import("../pages/Admin/Bookings.jsx"));
+// const Bookings = lazy(() => import("../pages/Admin/Bookings.jsx"));
 
 const NotFoundpage = lazy(() => import("../pages/NotFoundpage.jsx"));
 
@@ -50,6 +50,7 @@ const Userprofile = lazy(() => import("../pages/Admin/users/Userprofile.jsx"));
 const BookingDetails = lazy(() =>
   import("../pages/Admin/users/BooKingDetails.jsx")
 );
+const NotificationAd = lazy(() => import("../pages/Admin/NotificationAd.jsx"));
 //Visualized
 const Report = lazy(() => import("../pages/Admin/inside/Report.jsx"));
 
@@ -73,12 +74,68 @@ const BookingDetailsShow = lazy(() =>
   import("../components/BookingDetialsShow.jsx")
 );
 
+const Notification = lazy(() =>
+  import("../pages/User/dashboard/Notification.jsx")
+);
+
+const RoomDetials = lazy(() => import("../pages/User/RoomDetail.jsx"));
+
 const DashboardScreen = lazy(() => import("../Layout/DashboardScreen.jsx"));
 // Reusable Suspense Wrapper
 const SuspenseWrapper = ({ Component, fallback = <LoadingPage /> }) => (
   <Suspense fallback={fallback}>
     <Component />
   </Suspense>
+);
+
+// Receptionist component
+import ReceptionistLayout from "../Layout/ReceptionistLayout.jsx";
+const ReceptionistDashboard = lazy(() =>
+  import("../pages/Receptionist/ReceptionistDashboard.jsx")
+);
+const RoomReci = lazy(() => import("../pages/Receptionist/pages/RoomReci.jsx"));
+const BookingsReci = lazy(() =>
+  import("../pages/Receptionist/pages/BookingsReci.jsx")
+);
+const ReportsReci = lazy(() =>
+  import("../pages/Receptionist/pages/ReportsReci.jsx")
+);
+
+const GuestsReci = lazy(() =>
+  import("../pages/Receptionist/pages/GuestsReci.jsx")
+);
+
+const BookingRoomReci = lazy(() =>
+  import("../pages/Receptionist/pages/BookingRoomReci.jsx")
+);
+
+const GuestProfile = lazy(() =>
+  import("../pages/Receptionist/pages/GuestProfile.jsx")
+);
+
+const BillingHistory = lazy(() => import("../pages/Admin/BillinHisotry.jsx"));
+
+const LoginCradentialReci = lazy(() =>
+  import("../pages/Receptionist/authentication/LoginCradentialReci.jsx")
+);
+const PasswordVerifyReci = lazy(() =>
+  import("../pages/Receptionist/authentication/PasswordVerifyReci.jsx")
+);
+
+const Verified = lazy(() =>
+  import("../pages/Receptionist/authentication/Verified.jsx")
+);
+
+const ResetPasswordReci = lazy(() =>
+  import("../pages/Receptionist/authentication/ResetPassword.jsx")
+);
+
+const NotificationReci = lazy(() =>
+  import("../pages/Receptionist/pages/NotificationReci.jsx")
+);
+
+const ProfileReci = lazy(() =>
+  import("../pages/Receptionist/pages/ProfileReci.jsx")
 );
 
 // Router Configuration
@@ -99,7 +156,7 @@ const router = createBrowserRouter([
         path: "/room/:id",
         element: (
           <Landding>
-            <SuspenseWrapper Component={RoomDetialsShow} />
+            <SuspenseWrapper Component={RoomDetials} />
           </Landding>
         ),
       },
@@ -164,6 +221,14 @@ const router = createBrowserRouter([
             ),
           },
           {
+            path: "notification",
+            element: (
+              <DashboardScreen>
+                <SuspenseWrapper Component={Notification} />
+              </DashboardScreen>
+            ),
+          },
+          {
             path: "bookings/details/:id",
             element: (
               <DashboardScreen>
@@ -213,9 +278,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/admin",
-        element: <App>
-          
-        </App>,
+        element: <App />,
         children: [
           {
             path: "/admin",
@@ -243,11 +306,11 @@ const router = createBrowserRouter([
           },
           {
             path: "profile",
-            element:(
+            element: (
               <AdminDashboard>
                 {<SuspenseWrapper Component={AdminProfile} />}
               </AdminDashboard>
-            )
+            ),
           },
           {
             path: "/admin/dashboard/rooms",
@@ -288,7 +351,15 @@ const router = createBrowserRouter([
             path: "/admin/dashboard/bookings",
             element: (
               <AdminDashboard>
-                {<SuspenseWrapper Component={Bookings} />}
+                {<SuspenseWrapper Component={BillingHistory} />}
+              </AdminDashboard>
+            ),
+          },
+          {
+            path: "/admin/dashboard/notification",
+            element: (
+              <AdminDashboard>
+                {<SuspenseWrapper Component={NotificationAd} />}
               </AdminDashboard>
             ),
           },
@@ -338,6 +409,125 @@ const router = createBrowserRouter([
               <AdminDashboard>
                 {<SuspenseWrapper Component={Report} />}
               </AdminDashboard>
+            ),
+          },
+        ],
+      },
+      {
+        path: "/receptionist/dashboard",
+        element: <App />,
+        children: [
+          {
+            path: "login",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={LoginCradentialReci} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "password-verify",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={PasswordVerifyReci} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "verify-account",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={Verified} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "reset-password",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={ResetPasswordReci} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "/receptionist/dashboard",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={ReceptionistDashboard} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "rooms",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={RoomReci} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "guests",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={GuestsReci} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "bookings",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={BookingsReci} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "bookings/booking-room/:id",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={BookingRoomReci} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "reports",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={ReportsReci} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "guest-profile/:id",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={GuestProfile} />}
+              </ReceptionistLayout>
+            ),
+          },
+
+          {
+            path: "booking-detials/:id",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={BookingDetailsShow} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "notification",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={NotificationReci} />}
+              </ReceptionistLayout>
+            ),
+          },
+          {
+            path: "profile",
+            element: (
+              <ReceptionistLayout>
+                {<SuspenseWrapper Component={ProfileReci} />}
+              </ReceptionistLayout>
             ),
           },
         ],

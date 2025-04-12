@@ -45,15 +45,15 @@ export default function Landding({ children }) {
   const [scrollLength, setScrollLength] = useState(0);
 
   const { isLogged } = useSelector((state) => state.isLoggedReducer);
-  console.log(isLogged);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const location = useLocation();
   const avatureGet = async () => {
     if (isLogged) {
       const response = await getUserAvature();
+
       if (response.status) {
-        action.setUserAvatuer(response.avature);
+        action.setUserAvatuer(response.avature, response.id);
       } else {
         toast.error(response.message);
       }

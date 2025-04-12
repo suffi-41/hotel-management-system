@@ -31,6 +31,9 @@ export const logged_token = () => {
 export const admin_token = () => {
   return localStorage.getItem("authentication_admin_token")
 }
+export const staff_token = () => {
+  return localStorage.getItem("authentication_staff_token")
+}
 
 export const middle_hidden = (string) => {
   const first = string?.slice(0, 3);

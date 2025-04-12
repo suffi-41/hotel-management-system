@@ -4,6 +4,7 @@ import 'dotenv/config'
 import CONNECT_DB from "./config/_db.mjs";
 const app = express();
 CONNECT_DB();
+import "./controllers/realtimeupdateNotification.mjs"
 
 //user routes files import
 import user from "./routers/user.mjs";
@@ -20,11 +21,17 @@ import booking from "./routers/booking.mjs";
 //Booking payment routes files import
 import bookingPayment from "./routers/bookingPayment.mjs";
 
-//utils routes files import
-import utils from "./routers/utils.mjs"
+
 
 //visualized routes files import
 import visualized from "./routers/visualized.mjs"
+
+// Contact routes file import
+import contact from "./routers/contact.mjs"
+
+// notificatin router import
+import notification from "./routers/notification.mjs"
+
 
 const port = process.env.PORT || 3333;
 
@@ -38,9 +45,10 @@ app.use("/api/v1/user", user);
 app.use("/api/v1/employee", employess);
 app.use("/api/v1/room", room)
 app.use("/api/v1/booking", booking);
-app.use("api/vi/booking-payment", bookingPayment)
-app.use("/api/v1/utils", utils)
+app.use("/api/vi/booking-payment", bookingPayment)
 app.use("/api/v1/visualized", visualized)
+app.use("/api/v1/contact", contact)
+app.use("/api/v1/notification", notification)
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

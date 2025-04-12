@@ -1,24 +1,18 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import { addRoomvalidationSchema } from "../../../../scema";
 import { RxCross2 } from "react-icons/rx";
 import { addRoomDetialsUrl } from "../../../../utils/api";
 import { toast } from "react-toastify";
 import Loadding from "../../../../components/Loadding";
+import Amenities from "./Amenities";
 
-// redux
-import { actionCreator } from "../../../../redux";
-import { bindActionCreators } from "redux";
-import { useDispatch, useSelector } from "react-redux";
-
-export default function Add({ closeModal, refetch }) {
-  const dispatch = useDispatch();
-  const action = bindActionCreators(actionCreator, dispatch);
+export default function Add({ closeModal }) {
   const [imageFiles, setImageFiles] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoadding] = useState(false);
+  const [amenities, setAmenities] = useState([]);
 
   // Handle image upload
   const handleImageUpload = (e) => {
@@ -56,6 +50,8 @@ export default function Add({ closeModal, refetch }) {
       formData.append("status", values.status);
       formData.append("capacity", values.capacity);
       formData.append("description", values.description);
+      formData.append("amenities", JSON.stringify(amenities));
+      console.log(amenities)
       // Append images to FormData
       imageFiles.map((image) => formData.append("images", image.file));
 
@@ -66,12 +62,9 @@ export default function Add({ closeModal, refetch }) {
           body: formData,
         });
         const responseData = await response.json();
-        const { status, message ,id} = responseData;
+        const { status, message, id } = responseData;
         if (status) {
-          values._id= await id;
-          console.log(values);
           setLoadding(true);
-          action.AddRoom(values);
           toast.success(message);
           setImageFiles([]);
           closeModal(false);
@@ -98,9 +91,8 @@ export default function Add({ closeModal, refetch }) {
     }
   };
 
-  return (
-    <div className="flex w-screen h-screen fixed m-0 top-0 left-0 items-center z-20 justify-center backdrop-blur-sm bg-transparent">
-      {loading && <Loadding />}
+  return !loading ? (
+    <div className="flex w-screen h-screen fixed m-0 top-0 left-0 items-center z-10 justify-center backdrop-blur-sm bg-transparent">
       <div
         className="absolute right-5 cursor-pointer top-5 p-2 rounded-full text-2xl bg-white"
         onClick={() => {
@@ -321,10 +313,13 @@ export default function Add({ closeModal, refetch }) {
                 ))}
               </motion.div>
             )}
+
+            <Amenities exportAmenity={setAmenities} />
           </div>
+          {/* Amenities */}
 
           {/* Submit Button */}
-          <div>
+          <div className="mt-2">
             <motion.button
               type="submit"
               className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -337,5 +332,7 @@ export default function Add({ closeModal, refetch }) {
         </form>
       </motion.div>
     </div>
+  ) : (
+    <Loadding />
   );
 }

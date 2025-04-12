@@ -1,23 +1,30 @@
-
-*,#root{
-  padding:0px; 
-   margin:0px; 
+*,
+#root {
+  padding: 0px;
+  margin: 0px;
   box-sizing: border-box;
   /* max-width:100vw; */
-  text-align:none; 
+  text-align: none;
 }
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
+
+
+
+* {
+  scroll-behavior: smooth;
+}
+
 #nprogress .bar {
   background: red !important;
   height: 4px !important;
 }
-.landding_itmes{
+.landding_itmes {
   display: flex !important;
 }
 .slick-dots {
-  bottom:30px !important;
+  bottom: 30px !important;
 }
-

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MdHome, MdContactSupport } from "react-icons/md";
 import { IoMdAddCircle } from "react-icons/io";
+import { UserContext } from "../state/User";
 
 import {
   FaHistory,
@@ -24,19 +25,56 @@ import { useLocation } from "react-router-dom";
 
 import Navbar from "../pages/Admin/authentication/conponent/Navbar";
 import Footer from "../pages/Admin/authentication/conponent/Footer";
+import { admin_token } from "../utils/extra";
 
 //redux
-
-import { useSelector } from "react-redux";
+import { actionCreator } from "../redux";
+import { bindActionCreators } from "redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const AdminDashboard = ({ children }) => {
+  const dispatch = useDispatch();
+  const action = bindActionCreators(actionCreator, dispatch);
+  const { unreadLength } = useSelector((state) => state?.notificationReducer);
+
+  const { geAdminAvatueAndId } = useContext(UserContext);
+  const adminToken = admin_token();
   const navigate = useNavigate();
   const { isAdminLogged } = useSelector((state) => state.isLoggedReducer);
-  // useEffect(() => {
-  //   isAdminLogged ? isAdminLogged && navigate("/admin") : navigate("/admin/login");
-  // }, []);
+  useEffect(() => {
+    !isAdminLogged && !adminToken && navigate("/admin/login");
+  }, [adminToken, isAdminLogged]);
   const location = useLocation();
   const { pathname } = location;
+
+  const getAvature = async () => {
+    if (isAdminLogged) {
+      const data = await geAdminAvatueAndId();
+      console.log(data);
+      if (data?.status) {
+        action.setManagerAvatuer(data.avature, data.id);
+      } else {
+        toast.error(data?.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getAvature();
+  }, [isAdminLogged]);
+
+  const { managerAvature: avature } = useSelector(
+    (state) => state.userAvatureReducer
+  );
+
+  // logout
+  const logOut = async () => {
+    localStorage.removeItem("authentication_admin_token");
+    action.Adminlogout();
+    toast.error("Logout Successfully");
+    navigate("/admin/login");
+  };
 
   return !isAdminLogged ? (
     <div className="h-screen w-screen  bg-gray-100 flex  flex-col justify-between items-center">
@@ -76,12 +114,12 @@ const AdminDashboard = ({ children }) => {
                   to="/admin/dashboard/users"
                   className="flex items-center hover:bg-blue-700 p-2 rounded"
                 >
-                  <FaUsers className="mr-2" /> Guests
+                  <FaUsers className="mr-2" /> Users
                 </Link>
               </li>
               <li className="mb-4">
                 <Link
-                  to="/billing"
+                  to="/admin/dashboard/bookings"
                   className="flex items-center hover:bg-blue-700 p-2 rounded"
                 >
                   <FaMoneyBill className="mr-2" /> Billing
@@ -106,9 +144,16 @@ const AdminDashboard = ({ children }) => {
               <li className="mb-4">
                 <Link
                   to="/admin/dashboard/notification"
-                  className="flex items-center hover:bg-blue-700 p-2 rounded"
+                  className="flex items-center hover:bg-blue-700 p-2 rounded "
                 >
-                  <IoNotificationsCircleSharp className="mr-2 text-xl" />{" "}
+                  <div className="relative">
+                    <IoNotificationsCircleSharp className="mr-2 text-xl" />
+                    {unreadLength !== 0 && (
+                      <small className="absolute bottom-3 bg-red-500 h-4 w-4 left-2 flex items-center justify-center text-sm rounded-full text-white">
+                        {unreadLength}
+                      </small>
+                    )}
+                  </div>
                   Notification
                 </Link>
               </li>
@@ -119,13 +164,27 @@ const AdminDashboard = ({ children }) => {
                   to="/admin/profile"
                   className="flex items-center hover:bg-blue-700 p-2 rounded"
                 >
-                  <FaChartLine className="mr-2" /> Profile
+                  <span
+                    className="rounded-full overflow-hiiden border-2 mr-2"
+                    style={{
+                      height: "25px",
+                      width: "25px",
+                    }}
+                  >
+                    <img
+                      src={avature}
+                      alt="profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </span>{" "}
+                  Profile
                 </Link>
               </li>
               <li className="mb-4">
                 <button
                   to="/admin/dashboard/room-booking-history"
-                  className="flex items-center hover:bg-red-500 p-2 rounded w-full "
+                  className="flex items-center hover:bg-red-200 p-2 hover:text-red-700 rounded w-full "
+                  onClick={logOut}
                 >
                   <IoMdLogOut className="mr-2 text-xl " /> Logout
                 </button>
@@ -181,51 +240,7 @@ const AdminDashboard = ({ children }) => {
           </Link>
         </div>
         <main className="flex-1 w-full max-h-screen overflow-auto z-100">
-          {/* <header className="flex items-center justify-between p-4 bg-white shadow-lg text-white sticky top-0 ">
-           
-            <div className="md:hidden text-xl font-semibold">
-              Admin Dashboard
-            </div>
-
-            
-            <div className="hidden md:block"></div>
-
-          
-            <div className="hidden sm:flex items-center bg-gray-700 rounded-lg p-1 w-1/3">
-              <FaSearch className="text-gray-400 ml-2" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="bg-transparent outline-none text-white ml-2 w-full"
-              />
-            </div>
-
-            <div className="flex items-center space-x-4">
-           
-              <button className="relative p-2 rounded-full bg-gray-700 hover:bg-gray-600">
-                <FaBell />
-                <span className="absolute top-0 right-0 bg-red-500 rounded-full h-2 w-2"></span>
-              </button>
-
-              <div className="relative group">
-                <button className="flex items-center p-2 rounded-full bg-gray-700 hover:bg-gray-600">
-                  <FaUserCircle className="text-2xl" />
-                </button>
-
-            
-                <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg hidden group-hover:block">
-                  <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-                    Settings
-                  </a>
-                  <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-                    Logout
-                  </a>
-                </div>
-              </div>
-            </div>
-          </header> */}
-
-          <div className="md:p-8 p-2 max-h-screen">
+          <div className="md:p-4 p-2 max-h-screen">
             {!(
               pathname === "/admin/login" ||
               pathname === "admin/password-verify"

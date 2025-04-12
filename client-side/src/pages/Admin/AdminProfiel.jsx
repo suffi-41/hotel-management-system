@@ -41,6 +41,7 @@ const validationSchema = Yup.object().shape({
   salary: Yup.number().min(0, "Cannot be negative").required("Required"),
 });
 
+
 const AdminProfile = () => {
   const {
     getEmployeedetialsWithToken,
@@ -155,9 +156,9 @@ const AdminProfile = () => {
 
     switch (name) {
       case "createdAt":
-        return <p className="text-gray-800">{value}</p>
+        return <p className="text-gray-800">{value}</p>;
       case "updatedAt":
-        return <p className="text-gray-800">{value}</p>
+        return <p className="text-gray-800">{value}</p>;
       case "email":
         return (
           <div className="flex items-center">
@@ -269,7 +270,7 @@ const AdminProfile = () => {
   const renderSection = (title, icon, fields = {}, section) => (
     <motion.div
       variants={sectionVariants}
-      className="bg-white rounded-lg p-6 shadow-md mb-6"
+      className="bg-white rounded-sm p-6 shadow-sm mb-6"
     >
       <div className="flex items-center mb-4">
         {icon}
@@ -329,13 +330,13 @@ const AdminProfile = () => {
   return isLoading ? (
     <LoadingPage />
   ) : (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="p-4">
       <form className="max-w-4xl mx-auto">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex items-center mb-8 relative"
+          className="flex items-center mb-8 relative bg-white p-6 rounded-sm shadow-sm"
         >
           {/* Avatar */}
           <div className="relative group">
@@ -369,7 +370,7 @@ const AdminProfile = () => {
           </div>
 
           {/* Name and Role */}
-          <div className="flex-1">
+          <div className="flex-1 text-start">
             {isEditingHeader ? (
               <div className="flex items-center gap-4">
                 <input

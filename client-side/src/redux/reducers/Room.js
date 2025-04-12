@@ -12,7 +12,7 @@ const roomReducer = (state = initialState, action) => {
         ...state,
         rooms: action.payload,
       };
-    
+
     case "AddRoom":
       return {
         ...state,
@@ -24,11 +24,11 @@ const roomReducer = (state = initialState, action) => {
         rooms: state.rooms.filter((room) => room._id !== action.payload),
       };
     case "SetCurrentRoom":
-        const selectedRoom = state.rooms.find((room) => room._id === action.payload);
-        return {
-          ...state,
-          currentRoom: selectedRoom,  // Set the selected room as the current room
-        };
+      const selectedRoom = state.rooms.find((room) => room._id === action.payload);
+      return {
+        ...state,
+        currentRoom: selectedRoom,  // Set the selected room as the current room
+      };
     case "EditRoom":
       return {
         ...state,

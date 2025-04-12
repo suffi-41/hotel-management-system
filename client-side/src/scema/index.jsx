@@ -1,11 +1,9 @@
 import * as Yup from "yup";
 
-
-
 export const RegisterScema = Yup.object().shape({
   firstname: Yup.string()
     .required("Required")
-    .min(3, "Must be at least 3 characters")
+    .min(2, "Must be at least 3 characters")
     .max(20, "Must be at most 20 characters"),
   lastname: Yup.string()
     .required("Required")
@@ -35,14 +33,18 @@ export const loginScema = Yup.object().shape({
   phone: Yup.string()
     .required("Required")
     .min(10, "Must be at least 10 digits")
-    .max(25, "Must be at most 25 digits")
+    .max(25, "Must be at most 25 digits"),
 });
 
 export const loginCradentiacl = Yup.object().shape({
   cradentical: Yup.string()
     .required("Required")
     .min(10, "Must be at least 10 digits")
-    .max(25, "Must be at most 25 digits"),
+    .max(100, "Must be at most 25 digits"),
+});
+
+export const mailValidation = Yup.object().shape({
+  email: Yup.string().email("Invalid email address").required("Required"),
 });
 
 export const passwordScema = Yup.object().shape({
@@ -59,19 +61,14 @@ export const resertPasswordCreationScema = Yup.object().shape({
     .oneOf([Yup.ref("password"), null], "Passwords do not match")
     .required("Required"),
 });
- // add room validation schema
-export const  addRoomvalidationSchema =  Yup.object({
-      roomNumber: Yup.string()
-        .required("Room number is required"),
-      type: Yup.string()
-        .required("Room type is required"),
-      price: Yup.number()
-        .required("Price is required")
-        .positive("Price must be a positive number"),
-      status: Yup.string()
-        .required("Status is required"),
-})
-
-
+// add room validation schema
+export const addRoomvalidationSchema = Yup.object({
+  roomNumber: Yup.string().required("Room number is required"),
+  type: Yup.string().required("Room type is required"),
+  price: Yup.number()
+    .required("Price is required")
+    .positive("Price must be a positive number"),
+  status: Yup.string().required("Status is required"),
+});
 
 //add staff validation schema

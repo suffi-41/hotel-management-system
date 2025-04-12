@@ -1,13 +1,16 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useFormik } from "formik";
+import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { FaUser, FaEnvelope, FaComment } from "react-icons/fa"; // Import icons
+import { FaUser, FaEnvelope, FaComment,FaQuestionCircle } from "react-icons/fa"; // Import icons
+import { contactUrl } from "../../utils/api";
 
 // Yup validation schema
 const ContactSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
+  subject: Yup.string().required("Subject is required"),
   message: Yup.string().required("Message is required"),
 });
 
@@ -17,12 +20,40 @@ const ContactPage = () => {
     initialValues: {
       name: "",
       email: "",
+      subject: "",
       message: "",
     },
     validationSchema: ContactSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      // You can add your API call or form submission logic here
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const toastId = toast.loading("Sending...");
+        const response = await fetch(contactUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+        const { message, status } = await response.json();
+        if (status) {
+          resetForm();
+          toast.update(toastId, {
+            render: message,
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+          });
+        } else {
+          toast.update(toastId, {
+            render: message,
+            type: "error",
+            isLoading: false,
+            autoClose: 2000,
+          });
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
     },
   });
 
@@ -94,6 +125,45 @@ const ContactPage = () => {
             {formik.touched.email && formik.errors.email ? (
               <div className="text-red-500 text-sm mt-1">
                 {formik.errors.email}
+              </div>
+            ) : null}
+          </div>
+          {/* {subject} */}
+          <div>
+            <label
+              htmlFor="subject"
+              className="block text-sm font-medium text-gray-700 text-start px-2"
+            >
+              Subject
+            </label>
+            <div className="relative mt-1">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaQuestionCircle className="h-5 w-5 text-gray-400" />
+              </div>
+              <select
+                id="subject"
+                name="subject"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.subject}
+                className="block w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+              >
+                <option value="">Select a subject</option>
+                <option value="Reservation Inquiry">
+                  Booking & Reservations
+                </option>
+                <option value="Special Requests">Special Accommodations</option>
+                <option value="Feedback/Complaint">
+                  Feedback & Complaints
+                </option>
+                <option value="Event Inquiry">Events & Conferences</option>
+                <option value="Emergency Contact">Urgent Assistance</option>
+                <option value="General Inquiry">General Questions</option>
+              </select>
+            </div>
+            {formik.touched.subject && formik.errors.subject ? (
+              <div className="text-red-500 text-sm mt-1">
+                {formik.errors.subject}
               </div>
             ) : null}
           </div>

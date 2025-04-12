@@ -17,23 +17,6 @@ const RoomHistory = () => {
     queryFn: () => getRoomBookingHistory(id),
   });
 
-  // Add derived fields for number of days and formatted dates
-  // const enrichedData = useMemo(() => {
-  //   if (!data?.history) return [];
-  //   return data?.history?.map(async(row) => ({
-  //     ...row,
-  //     numberOfDays: differenceInDays(
-  //       parseISO(row.leaveDate),
-  //       parseISO(row.checkIn)
-  //     ),
-  //     formattedCheckIn: format(parseISO(row.checkInDate), "dd/MM/yyyy hh:mm a"),
-  //     formattedLeaveDate: format(
-  //       parseISO(row.checkOutDate),
-  //       "dd/MM/yyyy hh:mm a"
-  //     ),
-  //   }));
-  // }, [data]);
-
   // Define table columns
   const columns = useMemo(
     () => [
